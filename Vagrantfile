@@ -1,8 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-project_path = './projects'
-webroot = 'web'
+# Conventions
+# host == Host Computer
+# node == VM
+
+host_source_root = 'projects'
+host_log_root    = 'logs'
+web_root         = 'webroot'
+node_source_root = '/source'
+node_log_root    = '/mnt/logs'
 
 Vagrant.configure("2") do |config|
   # All Vagrant configuration is done here. The most common configuration
@@ -36,7 +43,10 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder project_path, "/projects"
+  config.vm.synced_folder host_source_root, node_source_root
+  if host_log_root != 'undef'
+    config.vm.synced_folder host_log_root, node_log_root, :create => true, :extra => 'dmode=777,fmode=777'
+  end
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -54,6 +64,13 @@ Vagrant.configure("2") do |config|
   # information on available options.
 
   config.vm.provision :puppet do |puppet|
+    puppet.facter = {
+        'host_source_root' => host_source_root,
+        'node_source_root' => node_source_root,
+        'host_log_root'    => host_log_root,
+        'node_log_root'    => node_log_root,
+        'web_root'         => web_root,
+    }
     puppet.manifests_path = "puppet/manifests/"
     puppet.manifest_file  = "phpwebdev.pp"
     puppet.module_path = "puppet/modules/"

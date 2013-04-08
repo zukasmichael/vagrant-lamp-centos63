@@ -8,6 +8,10 @@ class server::httpd {
     notify  => Service["httpd"]
   }
 
+  file { '/mnt/logs/httpd':
+    ensure => directory
+  }
+
   package { "httpd":
     ensure => present
   }
@@ -52,11 +56,22 @@ class server::httpd {
   #   ensure => "directory",
   # }
 
-  file { "/etc/httpd/vhosts":
-    replace => true,
-    ensure  => present,
-    source  => "puppet:///modules/server/httpd/vhosts",
-    recurse => true,
+  #file { "/etc/httpd/vhosts":
+  #  replace => true,
+  #  ensure  => present,
+  #  source  => "puppet:///modules/server/httpd/vhosts",
+  #  recurse => true,
+  #}
+
+  file { '/etc/httpd/vhosts':
+    ensure => directory,
+    owner  => root,
+    group  => root,
+  }
+
+  file { '/etc/httpd/vhosts/phpdev.local.conf':
+    mode    => '0644',
+    content => template('server/httpd/vhosts/phpdev.local.conf')
   }
 
   # Uncomment if you want to specify SSL vhosts and SSL folder for your SSL files.
