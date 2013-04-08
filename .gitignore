@@ -1,1 +1,5 @@
 .vagrant
+.idea
+atlassian-ide-plugin.xml
+vagrant-lamp-centos63.iml
+

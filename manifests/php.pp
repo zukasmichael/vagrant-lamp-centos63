@@ -8,55 +8,55 @@ class php {
     notify  => Service["httpd"]
   }
 
-  package { "php":
+  package { "php53u":
     ensure  => present,
   }
 
-  package { "php-cli":
+  package { "php53u-cli":
     ensure  => present,
   }
 
-  package { "php-common":
+  package { "php53u-common":
     ensure  => present,
   }
 
-  package { "php-devel":
+  package { "php53u-devel":
     ensure  => present,
   }
 
-  package { "php-gd":
+  package { "php53u-gd":
     ensure  => present,
   }
 
-  package { "php-mcrypt":
+  package { "php53u-mcrypt":
     ensure  => present,
   }
 
-  package { "php-intl":
+  package { "php53u-intl":
     ensure  => present,
   }
 
-  package { "php-mbstring":
+  package { "php53u-mbstring":
     ensure  => present,
   }
 
-  package { "php-mysql":
+  package { "php53u-mysql":
     ensure  => present,
   }
 
-  package { "php-pdo":
+  package { "php53u-pdo":
     ensure  => present,
   }
 
-  package { "php-pear":
+  package { "php53u-pear":
     ensure  => present,
   }
 
-  package { "php-soap":
+  package { "php53u-soap":
     ensure  => present,
   }
 
-  package { "php-xml":
+  package { "php53u-xml":
     ensure  => present,
   }
 
@@ -64,16 +64,16 @@ class php {
     ensure  => present,
   }
 
-  package { "php-pecl-memcache":
+  package { "php53u-pecl-memcache":
     ensure  => present,
   }
 
-  package { "php-pecl-xdebug":
+  package { "php53u-pecl-xdebug":
     ensure  => present,
     require => Exec["grab-epel"]
   }
 
-  package { "php-pecl-apc":
+  package { "php53u-pecl-apc":
     ensure  => present,
   }
 
