@@ -1,4 +1,4 @@
-class httpd {
+class server::httpd {
 
   File {
     owner   => "root",
@@ -30,7 +30,7 @@ class httpd {
   file { "/etc/httpd/conf.d/vhost.conf":
     replace => true,
     ensure  => present,
-    source  => "/vagrant/files/httpd/conf.d/vhost.conf",
+    source  => "puppet:///modules/server/httpd/conf.d/vhost.conf",
   }
 
   # Uncomment if you want to create these folders separately
@@ -55,7 +55,7 @@ class httpd {
   file { "/etc/httpd/vhosts":
     replace => true,
     ensure  => present,
-    source  => "/vagrant/files/httpd/vhosts",
+    source  => "puppet:///modules/server/httpd/vhosts",
     recurse => true,
   }
 
@@ -64,13 +64,13 @@ class httpd {
   # file { "/etc/httpd/vhosts_ssl":
   #     replace => true,
   #     ensure  => present,
-  #     source  => "/vagrant/files/httpd/vhosts_ssl",
+  #     source  => "puppet:///modules/server/httpd/vhosts_ssl",
   #     recurse => true,
   #   }
   # file { "/etc/httpd/ssl":
   #     replace => true,
   #     ensure  => present,
-  #     source  => "/vagrant/files/httpd/ssl",
+  #     source  => "puppet:///modules/server/httpd/ssl",
   #     recurse => true,
   #   }
 

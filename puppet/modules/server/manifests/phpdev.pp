@@ -1,4 +1,4 @@
-class phpdev {
+class server::phpdev {
 
   package { "libxml2-devel":
   ensure  => present,

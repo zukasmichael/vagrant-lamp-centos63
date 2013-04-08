@@ -1,6 +1,7 @@
-class yum {
+class server::yum {
+  require server::ius
   exec { 'yum-update':
     command => '/usr/bin/yum -y update',
-    timeout => 0
+    timeout => 900
   }
 }

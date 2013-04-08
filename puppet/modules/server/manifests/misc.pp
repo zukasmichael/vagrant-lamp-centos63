@@ -1,4 +1,4 @@
-class misc {
+class server::misc {
 
   File {
     owner   => "root",

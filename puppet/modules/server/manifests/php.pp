@@ -1,4 +1,5 @@
-class php {
+class server::php {
+  require server::yum
 
   File {
     owner   => "root",
@@ -28,7 +29,12 @@ class php {
     ensure  => present,
   }
 
+  package { "libmcrypt":
+    ensure  => present,
+  }
+
   package { "php53u-mcrypt":
+    require => Package['libmcrypt'],
     ensure  => present,
   }
 
@@ -86,12 +92,12 @@ class php {
   file { "/etc/php.d/xhprof.ini":
     replace => true,
     ensure  => present,
-    source  => "/vagrant/files/php.d/xhprof.ini",
+    source  => "puppet:///modules/server/php.d/xhprof.ini",
   }
 
   file { "/etc/php.ini":
     replace => true,
     ensure  => present,
-    source  => "/vagrant/files/php.ini",
+    source  => "puppet:///modules/server/php.ini",
   }
 }

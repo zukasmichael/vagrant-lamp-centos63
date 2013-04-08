@@ -1,4 +1,4 @@
-class phpmyadmin {
+class server::phpmyadmin {
 
   File {
     owner   => "root",

@@ -1,4 +1,4 @@
-class rpmforge {
+class server::rpmforge {
   exec {
     "/usr/bin/wget http://packages.sw.be/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.x86_64.rpm":
     alias   => "grab-rpmforge",
