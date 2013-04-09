@@ -5,6 +5,7 @@
 # host == Host Computer
 # node == VM
 
+project_name     = 'My Project'
 host_source_root = 'projects'
 host_log_root    = 'logs'
 web_root         = 'webroot'
@@ -33,6 +34,8 @@ Vagrant.configure("2") do |config|
   # using a specific IP.
   config.vm.network :private_network, ip: "192.168.56.60"
   config.vm.hostname = "phpdev.local"
+  config.vm.customize ["modifyvm", :id, "--name", project_name]
+
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
