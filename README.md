@@ -71,7 +71,7 @@ $ vagrant destroy
 
 The phpMyAdmin URL: `http://phpdev.local/phpmyadmin` or `http://localhost:8080/phpmyadmin`.
 
-***Note:*** The MySQL username is `root` and the root password is `media1`. To change the default, edit `manifests/db.pp`.
+***Note:*** The MySQL username is `root` and the root password is blank. To change the default, edit `manifests/db.pp`.
 
 ## Attribution
 
