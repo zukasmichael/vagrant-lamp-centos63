@@ -26,7 +26,7 @@ This installs:
 3. Clone this repo into a local folder
 
 	```bash
-$ git clone git@github.com:miccheng/vagrant-lamp-centos63.git phpdev
+$ git clone git@github.com:jmather/vagrant-lamp-centos63.git phpdev
 $ git submodule init
 $ git submodule update
 ```
