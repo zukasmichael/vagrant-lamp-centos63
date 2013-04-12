@@ -39,29 +39,9 @@ class server::httpd {
 
   # Uncomment if you want to create these folders separately
 
-  # file { "/etc/httpd/vhosts":
-  #     ensure => "directory",
-  #   }
   file { "/etc/httpd/vhosts_ssl":
       ensure => "directory",
-    }
-  # file { "/etc/httpd/ssl":
-  #     ensure => "directory",
-  #   }
-
-  # How to create a writable folder
-
-  # file { "/var/www/share":
-  #   mode   => 777,
-  #   ensure => "directory",
-  # }
-
-  #file { "/etc/httpd/vhosts":
-  #  replace => true,
-  #  ensure  => present,
-  #  source  => "puppet:///modules/server/httpd/vhosts",
-  #  recurse => true,
-  #}
+  }
 
   file { '/etc/httpd/vhosts':
     ensure => directory,
@@ -69,9 +49,9 @@ class server::httpd {
     group  => root,
   }
 
-  file { '/etc/httpd/vhosts/phpdev.local.conf':
+  file { "/etc/httpd/vhosts/$fqdn.conf":
     mode    => '0644',
-    content => template('server/httpd/vhosts/phpdev.local.conf')
+    content => template('server/httpd/vhosts/vhost.conf')
   }
 
   # Uncomment if you want to specify SSL vhosts and SSL folder for your SSL files.

@@ -6,12 +6,8 @@ class server::iptables {
 
   service { "iptables":
     require => Package["iptables"],
-
     hasstatus => true,
     status => "true",
-
-    # hasrestart => false,
-
   }
 
   file { "/etc/sysconfig/iptables":
@@ -22,9 +18,7 @@ class server::iptables {
     ensure  => present,
     source  => "puppet:///modules/server/iptables.txt",
     require => Package["iptables"],
-
     notify  => Service["iptables"],
-    ;
   }
 
 }

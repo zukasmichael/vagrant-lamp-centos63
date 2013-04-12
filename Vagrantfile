@@ -11,6 +11,7 @@ host_log_root    = 'logs'
 web_root         = 'webroot'
 node_source_root = '/source'
 node_log_root    = '/mnt/logs'
+php_version      = '5.3' #5.4 is also usable. To change, you will need to rebuild the VM
 
 Vagrant.configure("2") do |config|
   # All Vagrant configuration is done here. The most common configuration
@@ -33,9 +34,11 @@ Vagrant.configure("2") do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   config.vm.network :private_network, ip: "192.168.56.60"
-  config.vm.hostname = "phpdev.local"
-  config.vm.customize ["modifyvm", :id, "--name", project_name]
+  config.vm.hostname = "dev.example.com"
 
+  config.vm.provider "virtualbox" do |v|
+    v.name = project_name
+  end
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -73,6 +76,7 @@ Vagrant.configure("2") do |config|
         'host_log_root'    => host_log_root,
         'node_log_root'    => node_log_root,
         'web_root'         => web_root,
+        'php_version'      => php_version,
     }
     puppet.manifests_path = "puppet/manifests/"
     puppet.manifest_file  = "phpwebdev.pp"

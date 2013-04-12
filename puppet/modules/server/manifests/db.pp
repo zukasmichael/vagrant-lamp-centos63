@@ -1,6 +1,6 @@
 class server::db {
   class { 'mysql': }
   class { 'mysql::server': 
-    config_hash => { 'root_password' => 'media1' }
+    config_hash => { 'root_password' => '' }
   }
 }
