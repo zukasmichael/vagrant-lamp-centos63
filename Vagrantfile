@@ -5,6 +5,7 @@
 # host == Host Computer
 # node == VM
 
+
 project_name     = 'My Project'
 host_source_root = 'projects'
 host_log_root    = 'logs'
@@ -12,6 +13,22 @@ web_root         = 'webroot'
 node_source_root = '/source'
 node_log_root    = '/mnt/logs'
 php_version      = '5.3' #5.4 is also usable. To change, you will need to rebuild the VM
+
+paths = {
+    :local_path  => host_source_root,
+    :log_path    => host_log_root,
+}
+
+# We have to clean up the paths because vagrant doesn't want
+# relative ones...
+paths.each_pair do |name,path|
+  paths[name] = File.expand_path(path)
+  if File.exists?(paths[name]) == false
+    print "The directory #{paths[name]} does not exist.\n"
+    exit 1
+  end
+end
+
 
 Vagrant.configure("2") do |config|
   # All Vagrant configuration is done here. The most common configuration
@@ -34,7 +51,7 @@ Vagrant.configure("2") do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   config.vm.network :private_network, ip: "192.168.56.60"
-  config.vm.hostname = "dev.example.com"
+  config.vm.hostname = "my.example.com"
 
   config.vm.provider "virtualbox" do |v|
     v.name = project_name
@@ -71,9 +88,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :puppet do |puppet|
     puppet.facter = {
-        'host_source_root' => host_source_root,
+        'host_source_root' => paths[:local_path],
         'node_source_root' => node_source_root,
-        'host_log_root'    => host_log_root,
+        'host_log_root'    => paths[:log_path],
         'node_log_root'    => node_log_root,
         'web_root'         => web_root,
         'php_version'      => php_version,
