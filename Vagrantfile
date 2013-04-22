@@ -66,7 +66,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder host_source_root, node_source_root
+  config.vm.synced_folder host_source_root, node_source_root, :extra => 'dmode=777,fmode=777'
   if host_log_root != 'undef'
     config.vm.synced_folder host_log_root, node_log_root, :create => true, :extra => 'dmode=777,fmode=777'
   end
