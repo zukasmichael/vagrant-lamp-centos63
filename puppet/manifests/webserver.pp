@@ -1,11 +1,10 @@
 # Puppet manifest for my PHP dev machine
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
-class phpdevweb {
+class webserver {
 	require server::misc
 	require server::yum
 	include server::iptables
 	include server::phpdev
-	include server::db
 	include server::httpd
 	#include phpmyadmin
 
@@ -20,4 +19,4 @@ class phpdevweb {
 
 
 
-include phpdevweb
+include webserver
