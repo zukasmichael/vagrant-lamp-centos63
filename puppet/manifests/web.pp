@@ -1,8 +1,11 @@
 # Puppet manifest for my PHP dev machine
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 class webserver {
+    class { server::yum:
+        enable_yum_update => $enable_yum_update,
+    }
+
 	require server::misc
-	require server::yum
 	include server::iptables
 	include server::phpdev
 	include server::httpd
@@ -15,6 +18,7 @@ class webserver {
     class { server::php:
         php_version => $php_version,
     }
+
 }
 
 

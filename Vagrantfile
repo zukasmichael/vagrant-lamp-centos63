@@ -13,7 +13,8 @@ web_root         = 'webroot'
 node_source_root = '/source'
 node_log_root    = '/mnt/logs'
 php_version      = '5.3' #5.4 is also usable. To change, you will need to rebuild the VM
-server_mode      = :web_and_db
+server_mode      = :single_server
+enable_yum_update= true
 
 paths = {
     :local_path  => host_source_root,
@@ -35,7 +36,7 @@ nodes = {}
 
 if server_mode == :single_server
   nodes = {
-      :'onebox' => {
+      :'all' => {
           :hostname => 'server.example.com',
           :ipaddress => '192.168.56.60',
       }
@@ -44,11 +45,11 @@ end
 
 if server_mode == :web_and_db
   nodes = {
-      :'webserver' => {
+      :'web' => {
           :hostname => 'server.example.com',
           :ipaddress => '192.168.56.60',
       },
-      :'dbserver' => {
+      :'db' => {
           :hostname => 'db.example.com',
           :ipaddress => '192.168.56.61',
       }
@@ -57,7 +58,7 @@ end
 
 Vagrant.configure("2") do |config|
   nodes.each_pair do |name,options|
-    config.vm.define options[:hostname] do |node|
+    config.vm.define name do |node|
       # All Vagrant configuration is done here. The most common configuration
       # options are documented and commented below. For a complete reference,
       # please see the online documentation at vagrantup.com.
@@ -122,6 +123,7 @@ Vagrant.configure("2") do |config|
             'web_root'         => web_root,
             'php_version'      => php_version,
             'ip_addresses'     => nodes.map { |name,data| data[:ipaddress] }.join(','),
+            'enable_yum_update'=> enable_yum_update,
         }
         puppet.manifests_path = "puppet/manifests/"
         puppet.manifest_file  = "#{name}.pp"

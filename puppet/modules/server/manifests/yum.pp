@@ -1,4 +1,6 @@
-class server::yum {
+class server::yum (
+  $enable_yum_update
+) {
   require server::yum::ius
 
   exec { "grap-epel":
@@ -7,9 +9,11 @@ class server::yum {
     alias   => "grab-epel",
   }
 
-  exec { 'yum-update':
-    command => '/usr/bin/yum -y update',
-    timeout => 900
+  if ($enable_yum_update == true) {
+    exec { 'yum-update':
+      command => '/usr/bin/yum -y update',
+      timeout => 900
+    }
   }
 }
 

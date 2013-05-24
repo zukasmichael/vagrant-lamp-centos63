@@ -1,5 +1,5 @@
 class server::db (
-  $ip_addresses = hiera("ip_addresses", '')
+  $ip_addresses
 ) {
   class { 'mysql': }
   class { 'mysql::server': 

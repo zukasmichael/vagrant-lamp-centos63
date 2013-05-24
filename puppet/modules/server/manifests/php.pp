@@ -1,5 +1,5 @@
 class server::php (
-  $php_version = hiera("php_version", "5.3")
+  $php_version
 ) {
   require server::yum
 
