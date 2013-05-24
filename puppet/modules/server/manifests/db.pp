@@ -1,5 +1,5 @@
 class server::db (
-  $ip_addresses = hiera("ip_addresses", [])
+  $ip_addresses = hiera("ip_addresses", '')
 ) {
   class { 'mysql': }
   class { 'mysql::server': 
@@ -8,7 +8,6 @@ class server::db (
 
   define assign_db_users() {
     $ip = $name
-    notify { "Found ip $name":; }
     database_user { "root@$ip":
       ensure => present,
       require => Class['mysql::config'],
@@ -20,7 +19,8 @@ class server::db (
     }
   }
 
+  $ips = split($ip_addresses, ',')
 
   assign_db_users{ ['192.168.56.1']: }
-  #assign_db_users{ $ip_addresses: }
+  assign_db_users{ $ips: }
 }

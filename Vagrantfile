@@ -121,7 +121,7 @@ Vagrant.configure("2") do |config|
             'node_log_root'    => node_log_root,
             'web_root'         => web_root,
             'php_version'      => php_version,
-            'ip_addresses'     => nodes.map { |name,data| data[:ipaddress] },
+            'ip_addresses'     => nodes.map { |name,data| data[:ipaddress] }.join(','),
         }
         puppet.manifests_path = "puppet/manifests/"
         puppet.manifest_file  = "#{name}.pp"
