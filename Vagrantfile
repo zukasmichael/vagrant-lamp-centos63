@@ -14,7 +14,7 @@ node_source_root = '/source'
 node_log_root    = '/mnt/logs'
 php_version      = '5.3' #5.4 is also usable. To change, you will need to rebuild the VM
 server_mode      = :single_server
-enable_yum_update= true
+enable_yum_update= false
 
 paths = {
     :local_path  => host_source_root,
@@ -37,7 +37,7 @@ nodes = {}
 if server_mode == :single_server
   nodes = {
       :'all' => {
-          :hostname => 'server.example.com',
+          :hostname => 'www',
           :ipaddress => '192.168.56.60',
       }
   }
@@ -46,11 +46,11 @@ end
 if server_mode == :web_and_db
   nodes = {
       :'web' => {
-          :hostname => 'server.example.com',
+          :hostname => 'www',
           :ipaddress => '192.168.56.60',
       },
       :'db' => {
-          :hostname => 'db.example.com',
+          :hostname => 'db',
           :ipaddress => '192.168.56.61',
       }
   }
@@ -79,10 +79,15 @@ Vagrant.configure("2") do |config|
       # Create a private network, which allows host-only access to the machine
       # using a specific IP.
       node.vm.network :private_network, ip: options[:ipaddress]
-      node.vm.hostname = options[:hostname]
+      node.vm.hostname = "#{options[:hostname]}.example.com"
 
       node.vm.provider "virtualbox" do |v|
-        v.name = project_name + " - #{name}"
+        if nodes.length > 1
+          v.name = options[:hostname]
+          v.customize ["modifyvm", :id, "--groups", "/#{project_name}"]
+        else
+          v.name = project_name
+        end
       end
 
       # Create a public network, which generally matched to bridged network.
