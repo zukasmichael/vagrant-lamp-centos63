@@ -2,19 +2,20 @@
 # vi: set ft=ruby :
 
 # Conventions
-# host == Host Computer
-# node == VM
+# host  == Host Computer
+# guest == VM
 
 
 project_name     = 'My Project'
-host_source_root = 'projects'
+host_source_root = '~/Projects/personal/FOSR'
 host_log_root    = 'logs'
-web_root         = 'webroot'
-node_source_root = '/source'
-node_log_root    = '/mnt/logs'
+web_root         = 'web'
+guest_source_root = '/source'
+guest_log_root    = '/mnt/logs'
 php_version      = '5.3' #5.4 is also usable. To change, you will need to rebuild the VM
 server_mode      = :single_server
 enable_yum_update= false
+enable_nfs       = false # Only enable after the first run -- currently box doesn't ship w/ NFS
 
 paths = {
     :local_path  => host_source_root,
@@ -36,7 +37,7 @@ nodes = {}
 
 if server_mode == :single_server
   nodes = {
-      :'all' => {
+      :all => {
           :hostname => 'www',
           :ipaddress => '192.168.56.60',
       }
@@ -45,11 +46,11 @@ end
 
 if server_mode == :web_and_db
   nodes = {
-      :'web' => {
+      :web => {
           :hostname => 'www',
           :ipaddress => '192.168.56.60',
       },
-      :'db' => {
+      :db => {
           :hostname => 'db',
           :ipaddress => '192.168.56.61',
       }
@@ -99,10 +100,19 @@ Vagrant.configure("2") do |config|
       # the path on the host to the actual folder. The second argument is
       # the path on the guest to mount the folder. And the optional third
       # argument is a set of non-required options.
-      node.vm.synced_folder host_source_root, node_source_root, :extra => 'dmode=777,fmode=777'
-      if host_log_root != 'undef'
-        node.vm.synced_folder host_log_root+"/#{name}", node_log_root, :create => true, :extra => 'dmode=777,fmode=777'
+
+      if enable_nfs
+        node.vm.synced_folder paths[:local_path], guest_source_root, :nfs => true
+        if host_log_root != 'undef'
+          node.vm.synced_folder "#{paths[:log_path]}/#{name}", guest_log_root, :create => true, :nfs => true
+        end
+      else
+        node.vm.synced_folder paths[:local_path], guest_source_root, :extra => 'dmode=777,fmode=777'
+        if host_log_root != 'undef'
+          node.vm.synced_folder "#{paths[:log_path]}/#{name}", guest_log_root, :create => true, :extra => 'dmode=777,fmode=777'
+        end
       end
+
 
       # Provider-specific configuration so you can fine-tune various
       # backing providers for Vagrant. These expose provider-specific options.
@@ -122,13 +132,14 @@ Vagrant.configure("2") do |config|
       node.vm.provision :puppet do |puppet|
         puppet.facter = {
             'host_source_root' => paths[:local_path],
-            'node_source_root' => node_source_root,
+            'guest_source_root' => guest_source_root,
             'host_log_root'    => paths[:log_path],
-            'node_log_root'    => node_log_root,
+            'guest_log_root'    => guest_log_root,
             'web_root'         => web_root,
             'php_version'      => php_version,
             'ip_addresses'     => nodes.map { |name,data| data[:ipaddress] }.join(','),
             'enable_yum_update'=> enable_yum_update,
+            'enable_nfs'       => enable_nfs,
         }
         puppet.manifests_path = "puppet/manifests/"
         puppet.manifest_file  = "#{name}.pp"

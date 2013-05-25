@@ -4,4 +4,9 @@ class server::misc {
     group   => "root",
     mode    => 644,
   }
+
+  package { "nfs-utils":
+    ensure  => present,
+  }
+
 }

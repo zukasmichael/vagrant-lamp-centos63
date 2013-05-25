@@ -1,6 +1,10 @@
 # Puppet manifest for my PHP dev machine
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 class dbserver {
+    if ($enable_nfs) {
+        require server::nfs
+    }
+
     class { server::yum:
         enable_yum_update => $enable_yum_update,
     }
