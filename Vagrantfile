@@ -7,7 +7,7 @@
 
 
 project_name     = 'My Project'
-host_source_root = '~/Projects/personal/FOSR'
+host_source_root = 'project'
 host_log_root    = 'logs'
 web_root         = 'web'
 guest_source_root = '/source'
@@ -18,8 +18,8 @@ enable_yum_update= false
 enable_nfs       = false # Only enable after the first run -- currently box doesn't ship w/ NFS
 
 paths = {
-    :local_path  => host_source_root,
-    :log_path    => host_log_root,
+    :host_source_path  => host_source_root,
+    :host_log_path    => host_log_root,
 }
 
 # We have to clean up the paths because vagrant doesn't want
@@ -32,6 +32,8 @@ paths.each_pair do |name,path|
   end
 end
 
+paths[:guest_source_path] = guest_source_root
+paths[:guest_log_path]    = guest_log_root
 
 nodes = {}
 
@@ -102,14 +104,14 @@ Vagrant.configure("2") do |config|
       # argument is a set of non-required options.
 
       if enable_nfs
-        node.vm.synced_folder paths[:local_path], guest_source_root, :nfs => true
+        node.vm.synced_folder paths[:host_source_path], paths[:guest_source_path], :nfs => true
         if host_log_root != 'undef'
-          node.vm.synced_folder "#{paths[:log_path]}/#{name}", guest_log_root, :create => true, :nfs => true
+          node.vm.synced_folder "#{paths[:host_log_path]}/#{name}", paths[:guest_log_path], :create => true, :nfs => true
         end
       else
-        node.vm.synced_folder paths[:local_path], guest_source_root, :extra => 'dmode=777,fmode=777'
+        node.vm.synced_folder paths[:host_source_path], paths[:guest_source_path], :extra => 'dmode=777,fmode=777'
         if host_log_root != 'undef'
-          node.vm.synced_folder "#{paths[:log_path]}/#{name}", guest_log_root, :create => true, :extra => 'dmode=777,fmode=777'
+          node.vm.synced_folder "#{paths[:host_log_path]}/#{name}", paths[:guest_log_path], :create => true, :extra => 'dmode=777,fmode=777'
         end
       end
 
@@ -131,19 +133,19 @@ Vagrant.configure("2") do |config|
 
       node.vm.provision :puppet do |puppet|
         puppet.facter = {
-            'host_source_root' => paths[:local_path],
-            'guest_source_root' => guest_source_root,
-            'host_log_root'    => paths[:log_path],
-            'guest_log_root'    => guest_log_root,
-            'web_root'         => web_root,
-            'php_version'      => php_version,
-            'ip_addresses'     => nodes.map { |name,data| data[:ipaddress] }.join(','),
-            'enable_yum_update'=> enable_yum_update,
-            'enable_nfs'       => enable_nfs,
+            'host_source_root'  => paths[:host_source_path],
+            'guest_source_root' => paths[:guest_source_path],
+            'host_log_root'     => paths[:host_log_path],
+            'guest_log_root'    => paths[:guest_log_path],
+            'web_root'          => web_root,
+            'php_version'       => php_version,
+            'ip_addresses'      => nodes.map { |name,data| data[:ipaddress] }.join(','),
+            'enable_yum_update' => enable_yum_update,
+            'enable_nfs'        => enable_nfs,
         }
         puppet.manifests_path = "puppet/manifests/"
         puppet.manifest_file  = "#{name}.pp"
-        puppet.module_path = "puppet/modules/"
+        puppet.module_path    = "puppet/modules/"
       end
     end
   end
