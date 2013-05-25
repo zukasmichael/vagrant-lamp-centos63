@@ -8,5 +8,4 @@ class server::misc {
   package { "nfs-utils":
     ensure  => present,
   }
-
 }

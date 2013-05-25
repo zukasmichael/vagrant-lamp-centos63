@@ -7,8 +7,8 @@
 
 
 project_name     = 'My Project'
-host_source_root = 'project'
-host_log_root    = 'logs'
+host_source_root = 'projects'
+host_log_root    = 'logs' #'~/Library/Logs/Vagrant' will show up in console on mac!
 web_root         = 'web'
 guest_source_root = '/source'
 guest_log_root    = '/mnt/logs'
