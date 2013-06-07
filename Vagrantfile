@@ -5,17 +5,43 @@
 # host  == Host Computer
 # guest == VM
 
+require 'yaml'
 
-project_name     = 'My Project'
-host_source_root = 'projects'
-host_log_root    = 'logs' #'~/Library/Logs/Vagrant' will show up in console on mac!
-web_root         = 'web'
+config_file_path = File.join(File.dirname(File.expand_path(__FILE__)), 'config.yml')
+config_file_dist_path = File.join(File.dirname(File.expand_path(__FILE__)), 'config.dist.yml')
+
+if File.exists?(config_file_path) == false
+  print 'No existing configuration file. Copying default config to config.yml'
+  print "\r\n"
+  config_file = File.open(config_file_dist_path, 'r')
+  config_file_contents = config_file.read
+  config_file.close
+  config_file = File.open(config_file_path, 'w')
+  config_file.write(config_file_contents)
+  config_file.close
+end
+
+vagrant_config = YAML::load_file(config_file_path)
+
+reference_config = YAML::load_file(config_file_dist_path)
+reference_config.each do |name, value|
+  if vagrant_config.has_key?(name) == false
+    print "Error: Your config.yml is out of date. No entry found for '#{name}'\r\n"
+    exit 2
+  end
+end
+
+project_name     = vagrant_config['name']
+host_source_root = vagrant_config['base_path']
+host_log_root    = vagrant_config['log_path']
+web_root         = vagrant_config['web_root']
+php_version      = vagrant_config['php_version']
+server_mode      = vagrant_config['server_mode']
+enable_yum_update= vagrant_config['enable_yum_update']
+enable_nfs       = vagrant_config['enable_nfs']
+
 guest_source_root = '/source'
 guest_log_root    = '/mnt/logs'
-php_version      = '5.3' #5.4 is also usable. To change, you will need to rebuild the VM
-server_mode      = :single_server
-enable_yum_update= false
-enable_nfs       = false # Only enable after the first run -- currently box doesn't ship w/ NFS
 
 paths = {
     :host_source_path  => host_source_root,
@@ -37,7 +63,7 @@ paths[:guest_log_path]    = guest_log_root
 
 nodes = {}
 
-if server_mode == :single_server
+if server_mode == 'single_server'
   nodes = {
       :all => {
           :hostname => 'www',
@@ -46,7 +72,7 @@ if server_mode == :single_server
   }
 end
 
-if server_mode == :web_and_db
+if server_mode == 'web_and_db'
   nodes = {
       :web => {
           :hostname => 'www',
@@ -67,8 +93,8 @@ Vagrant.configure("2") do |config|
       # please see the online documentation at vagrantup.com.
 
       # Every Vagrant virtual environment requires a box to build off of.
-      node.vm.box = "centos63-puppet"
-      node.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-63-x64.box"
+      node.vm.box = "centos64-puppet"
+      node.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210.box"
 
       # The url from where the 'config.vm.box' box will be fetched if it
       # doesn't already exist on the user's system.
@@ -85,6 +111,8 @@ Vagrant.configure("2") do |config|
       node.vm.hostname = "#{options[:hostname]}.example.com"
 
       node.vm.provider "virtualbox" do |v|
+        v.customize ["modifyvm", :id, "--accelerate3d", "off"]
+
         if nodes.length > 1
           v.name = options[:hostname]
           v.customize ["modifyvm", :id, "--groups", "/#{project_name}"]
