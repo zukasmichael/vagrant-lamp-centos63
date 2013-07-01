@@ -2,5 +2,5 @@
 .idea
 atlassian-ide-plugin.xml
 *.iml
-logs
+logs/*
 config.yml
